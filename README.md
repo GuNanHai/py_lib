@@ -14,7 +14,7 @@ python 模块说明文档：
 功用：从'https://free-proxy-list.net/'爬取代理IP列表
 知识点：
         1.通过selenium打开测试浏览器抓取Javascript动态页面的内容
-        2.通过lxml中的xpath方便地抓取指定内容（注意：有时不准确，建议使用bs4）
+        2.通过lxml中的xpath方便地抓取指定内容（注意：lxml的xpath有时不准确，建议使用bs4）
 函数：
 #               1.scrapeIpProxyList
 #               2.getIpProxyList
