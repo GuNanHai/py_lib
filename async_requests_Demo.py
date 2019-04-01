@@ -14,6 +14,7 @@ def fetch(session,url):
             pageContent = response.content
             if response.status_code != 200:
                 print("连接失败：{0}".format(url))
+                print("失败代码: " + response.status_code)
             return pageContent
     except Exception as e:
         print(e)
