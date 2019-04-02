@@ -81,3 +81,6 @@ def getIpList(data):
             ip= each['ip']+':'+each['port']
             ipList.append(ip)
     return ipList
+
+def main():
+    return getIpList(scrapeIpProxyList());

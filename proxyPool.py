@@ -7,6 +7,8 @@ import re
 #用于将字符串形式的字典对象转化成真正的字典对象
 import ast
 import random
+import os
+os.environ['no_proxy']='*'
 
 #================================函数目录
 #getIpList
@@ -33,15 +35,15 @@ def getIpList(ipcount=300):
         ipList.append(temp)
     return ipList
 
-def fetch(session,url,headers,proxies,timeout=3):
+def fetch(session,url,headers,proxy,timeout=3):
     try:
-        with session.get(url,headers=headers,proxies=proxies,timeout=timeout) as response:
+        with session.get(url,headers=headers,proxies=proxy,timeout=timeout) as response:
             if response.status_code != 200:
                 print("连接失败: {0} ".format(url))
                 print("失败代码: " + response.status_code)
                 return -1
             print('网站反馈信息：'+response.text)
-            return proxies
+            return proxy
     except Exception as e:
         return -1
 
@@ -60,7 +62,7 @@ async def get_data_asynchronous(ipList,protocol,timeout=3):
         proxies.append({
             protocol:protocol+'://'+each
         })
-    with ThreadPoolExecutor(max_workers=10) as executor:
+    with ThreadPoolExecutor(max_workers=100) as executor:
         with requests.Session() as session:
             loop = asyncio.get_event_loop()
             tasks = [
@@ -74,7 +76,9 @@ async def get_data_asynchronous(ipList,protocol,timeout=3):
             for response in await asyncio.gather(*tasks):
                 responses.append(response)
             return responses
-def refineProxies(ipList,protocol,timeout=3):
+
+# 输入： 【IP:Port】
+def refineProxies(ipList,protocol='https',timeout=3):
     loop = asyncio.get_event_loop()
     future = asyncio.ensure_future(get_data_asynchronous(ipList,protocol,timeout))
     responses = loop.run_until_complete(future)
@@ -83,10 +87,34 @@ def refineProxies(ipList,protocol,timeout=3):
         if each==-1:
             continue
         proxyPool.append(each)
+    print('代理有效率为： %.2f ' % (len(proxyPool)/len(ipList)))
     with open('proxyPool.json','w') as f:
         json.dump(proxyPool,f)
+
+# 测试用： 将{'https':'https://192.168.0.1:8080'}的格式转化为【IP:Port】----用于检查本地代理IP池的可用性。
+def convert_proxy_format(file):
+    with open(file,'r') as f:
+        proxyPool = json.load(f)
+    newProxyPool = []
+    for each in proxyPool:
+        if each['https']:
+            newProxyPool.append(each['https'].replace('https://',''))
+    return newProxyPool
+# 功能，合并多个代理池，
+# 输入：json文件名
+def merge_proxyPools(*proxyPools):
+    finalProxyPool = []
+    for each in proxyPools:
+        with open(each,'r') as f:
+            temp = json.load(f)
+            finalProxyPool.extend(temp)
+    with open('proxyPool.json','w') as f:
+        json.dump(finalProxyPool,f)
+    
 def main():
     refineProxies(getIpList(),'https')
+
+
 
 
 
