@@ -1,7 +1,7 @@
 import requests
 import asyncio
 from concurrent.futures import ThreadPoolExecutor
-
+# =================================Async Requests===============================================
 # 需要修改的fetch函数
 def fetchCoverImg(session,novel):
     if novel['novel_cover_img_link']:
@@ -58,3 +58,4 @@ def startAsyncRequests(dicts_list,fetchFun):
     connectionFailedObj = loop.run_until_complete(future)
     if connectionFailedObj:
         startAsyncRequests(connectionFailedObj)
+
