@@ -82,7 +82,7 @@ async def get_data_asynchronous(ipList,protocol,timeout=3):
             return responses
 
 # 输入： 【IP:Port】
-def refineProxies(ipList,protocol='http',timeout=3):
+def refineProxies(ipList,protocol='http',timeout=5):
     loop = asyncio.get_event_loop()
     future = asyncio.ensure_future(get_data_asynchronous(ipList,protocol,timeout))
     responses = loop.run_until_complete(future)
