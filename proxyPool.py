@@ -132,7 +132,7 @@ def convert_proxy_format(file='proxyPool.json'):
 def startTest():
     refineProxies(convert_proxy_format())
 
-
+main()
 
 
 
