@@ -107,12 +107,7 @@ def merge_proxyPools(*proxyPools):
     with open('proxyPool.json','w') as f:
         json.dump(finalProxyPool,f)
 
-# 以下专用于https代理的获取
-# def main():
-#     refineProxies(getIpList(),'https')
 
-def main():
-    refineProxies(getIpList(10000),'http')
 
 
 
@@ -132,6 +127,24 @@ def convert_proxy_format(file='proxyPool.json'):
 def startTest():
     refineProxies(convert_proxy_format())
 
+
+def genProxyTxt(file='proxyPool.json'):
+    with open(file,'r') as f:
+        proxyPool = json.load(f)
+    with open("proxy.txt","w") as f:
+        for each in proxyPool:
+            f.write(each["http"]+"\n")
+
+
+# 以下专用于https代理的获取
+# def main():
+#     refineProxies(getIpList(),'https')
+
+def main():
+    refineProxies(getIpList(10000),'http')
+    genProxyTxt()
+
+    
 main()
 
 
